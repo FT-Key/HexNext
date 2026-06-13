@@ -13,7 +13,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={href} className="block h-full">
-      <Card className="h-full transition-shadow hover:shadow-md">
+      <Card className="h-full transition-all duration-200 hover:shadow-md hover:ring-1 hover:ring-primary/30">
         <div className="relative aspect-square overflow-hidden rounded-t-xl bg-muted">
           <div className="flex h-full items-center justify-center text-4xl text-muted-foreground/30">
             <svg
@@ -44,7 +44,7 @@ export function ProductCard({ product }: ProductCardProps) {
               {formatPrice(product.precioComparativa)}
             </p>
           )}
-          <p className="text-lg font-semibold tracking-tight">
+          <p className="font-mono text-lg font-semibold tracking-tight">
             {formatPrice(product.precio)}
           </p>
           {product.descuento != null && product.descuento > 0 && (

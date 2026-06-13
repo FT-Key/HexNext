@@ -25,7 +25,7 @@ export function ProductSpecsTable({ especificaciones }: ProductSpecsTableProps) 
               <td className="px-4 py-3 font-medium text-muted-foreground">
                 {spec.nombre}
               </td>
-              <td className="px-4 py-3">{spec.valor}</td>
+              <td className="px-4 py-3 font-mono">{spec.valor}</td>
             </tr>
           ))}
         </tbody>

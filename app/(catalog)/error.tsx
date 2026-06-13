@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 interface ErrorProps {
   error: Error;
   reset: () => void;
@@ -30,12 +32,9 @@ export default function CatalogError({ error, reset }: ErrorProps) {
         <p className="max-w-sm text-sm text-muted-foreground">
           {error.message ?? "Ocurrió un error inesperado al cargar el catálogo."}
         </p>
-        <button
-          onClick={reset}
-          className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/80"
-        >
+        <Button onClick={reset} variant="default">
           Intentar de nuevo
-        </button>
+        </Button>
       </div>
     </div>
   );
