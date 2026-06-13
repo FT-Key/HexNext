@@ -14,6 +14,14 @@ NO es obligatorio pasar por todas las fases — se inteligente y adaptate.
    implementacion para entender el contexto de negocio y las user stories
 3. Actualiza WORKFLOW_STATE.md con la referencia a las US a implementar
 
+### Fase 0.5: Disenar (si no hay vision de diseno definida)
+1. Si no existe DESIGN_SYSTEM.md, indica al usuario que puede cambiar al
+   agente @design-strategist (presionando Tab) para definir la vision de
+   diseno primero
+2. Una vez que exista DESIGN_SYSTEM.md, el flujo lo usara como referencia
+   visual durante toda la implementacion
+3. Actualiza WORKFLOW_STATE.md referenciando DESIGN_SYSTEM.md
+
 ### Fase 1: Entender
 1. Si la solicitud es ambigua, haz preguntas al usuario
 2. Lee WORKFLOW_STATE.md para ver si hay contexto previo
@@ -34,10 +42,21 @@ NO es obligatorio pasar por todas las fases — se inteligente y adaptate.
 1. Lee el plan de WORKFLOW_STATE.md si existe
 2. Busca la US en REQUIREMENTS.md y obten el Trello cardId
 3. Delega a @pm-agent para leer la card (descripcion + AC)
-4. Para implementacion directa: hazlo tu mismo (build)
-5. Para implementacion compleja: delega a @builder via Task tool
-6. Al empezar, pide a @pm-agent mover la card a In Progress; al terminar, a Review
-7. Sigue las convenciones de Next.js App Router
+4. Si la US involucra componentes UI con diseno definido en DESIGN_SYSTEM.md,
+   carga el skill `design-system` y revisa los tokens antes de codificar
+5. Para implementacion directa: hazlo tu mismo (build)
+6. Para implementacion compleja: delega a @builder via Task tool
+7. Al empezar, pide a @pm-agent mover la card a In Progress; al terminar, a Review
+8. Sigue las convenciones de Next.js App Router
+
+### Fase 4.5: Revisar diseno (si la US tiene componentes UI)
+1. Si la US involucra componentes visuales nuevos o modificados,
+   delega a @designer via Task tool para design review
+2. El @designer verifica fidelidad visual contra DESIGN_SYSTEM.md
+3. Si hay issues bloqueantes:
+   a. Corrige los issues (tu mismo o via @builder)
+   b. Vuelve a pasar por Fase 4.5
+4. Sigue iterando hasta que @designer apruebe el diseno
 
 ### Fase 5: Revisar
 1. Delega a @reviewer via Task tool para code review
@@ -88,6 +107,14 @@ Task({
 | `linter` | ESLint y TypeScript checks |
 | `git-assistant` | Git: branches, commits, PRs |
 | `pm-agent` | Operaciones PM: leer/mover/comentar cards en Trello |
+| `designer` | Design review: verificar fidelidad visual contra DESIGN_SYSTEM.md |
+
+### Agentes de dialogo (mode: all)
+
+| Agente | Para que |
+|--------|----------|
+| `systems-analyst` | Analizar requisitos de negocio, escribir REQUIREMENTS.md |
+| `design-strategist` | Definir vision de diseno, escribir DESIGN_SYSTEM.md |
 
 Para tareas independientes, lanza multiples Task en UN SOLO mensaje
 (se ejecutan en paralelo). Para secuencia, usa mensajes separados.
@@ -135,6 +162,7 @@ deben cargarlos con `skill({ name: "..." })` segun corresponda.
 | `dependency-injection` | Al configurar el contenedor DI |
 | `logging` | Al anadir logs en cualquier capa |
 | `forms-validation` | Al crear formularios con validacion |
+| `design-system` | Al definir tokens, colores, componentes o revisar fidelidad visual |
 
 ### Como cargar una skill
 

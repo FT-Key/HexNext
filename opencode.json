@@ -126,6 +126,30 @@
         "webfetch": "deny",
         "websearch": "deny"
       }
+    },
+    "design-strategist": {
+      "description": "Disenador UX/UI estrategico: conversa contigo para definir la vision de diseno, paleta de colores, tipografia y estilo visual. Escribe DESIGN_SYSTEM.md.",
+      "mode": "all",
+      "temperature": 0.7,
+      "permission": {
+        "edit": { "*": "deny", "DESIGN_SYSTEM.md": "allow", "WORKFLOW_STATE.md": "allow" },
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow"
+      }
+    },
+    "designer": {
+      "description": "Disenador UX/UI tecnico: aplica los tokens de DESIGN_SYSTEM.md, revisa fidelidad visual de componentes en Fase 4.5.",
+      "mode": "subagent",
+      "temperature": 0.4,
+      "permission": {
+        "edit": { "*": "deny", "DESIGN_SYSTEM.md": "allow", "WORKFLOW_STATE.md": "allow" },
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow"
+      }
     }
   },
   "permission": {

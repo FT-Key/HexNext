@@ -41,7 +41,7 @@ export function ProductDetail({ product: initialProduct, variants }: ProductDeta
 
         <div className="space-y-1">
           <div className="flex items-baseline gap-3">
-            <p className="font-mono text-3xl font-bold tracking-tight">
+            <p className="text-3xl font-bold tracking-tight">
               {formatPrice(selectedProduct.precio)}
             </p>
             {selectedProduct.precioComparativa && (
@@ -50,7 +50,7 @@ export function ProductDetail({ product: initialProduct, variants }: ProductDeta
               </p>
             )}
           </div>
-          {selectedProduct.descuento != null && selectedProduct.descuento > 0 && (
+          {selectedProduct.descuento && (
             <p className="text-sm font-medium text-primary">
               {selectedProduct.descuento}% de descuento
             </p>
@@ -72,7 +72,6 @@ export function ProductDetail({ product: initialProduct, variants }: ProductDeta
         <div className="space-y-3">
           <Button
             size="lg"
-            variant="cta"
             className="w-full"
             disabled={isOutOfStock}
           >
