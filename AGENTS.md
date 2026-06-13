@@ -5,6 +5,15 @@
 Cuando recibas una solicitud de implementacion, sigue este proceso.
 NO es obligatorio pasar por todas las fases — se inteligente y adaptate.
 
+### Fase 0: Analizar (si no hay requisitos claros)
+1. Si el usuario tiene una idea vaga o no existe REQUIREMENTS.md:
+   a. Indica al usuario que puede cambiar al agente @systems-analyst
+      (presionando Tab) para definir los requisitos primero
+   b. Una vez que exista REQUIREMENTS.md, lo usaras como entrada
+2. Si ya existe REQUIREMENTS.md, leelo antes de empezar cualquier
+   implementacion para entender el contexto de negocio y las user stories
+3. Actualiza WORKFLOW_STATE.md con la referencia a las US a implementar
+
 ### Fase 1: Entender
 1. Si la solicitud es ambigua, haz preguntas al usuario
 2. Lee WORKFLOW_STATE.md para ver si hay contexto previo
@@ -23,9 +32,12 @@ NO es obligatorio pasar por todas las fases — se inteligente y adaptate.
 
 ### Fase 4: Implementar
 1. Lee el plan de WORKFLOW_STATE.md si existe
-2. Para implementacion directa: hazlo tu mismo (build)
-3. Para implementacion compleja: delega a @builder via Task tool
-4. Sigue las convenciones de Next.js App Router
+2. Busca la US en REQUIREMENTS.md y obten el Trello cardId
+3. Delega a @pm-agent para leer la card (descripcion + AC)
+4. Para implementacion directa: hazlo tu mismo (build)
+5. Para implementacion compleja: delega a @builder via Task tool
+6. Al empezar, pide a @pm-agent mover la card a In Progress; al terminar, a Review
+7. Sigue las convenciones de Next.js App Router
 
 ### Fase 5: Revisar
 1. Delega a @reviewer via Task tool para code review
@@ -34,6 +46,7 @@ NO es obligatorio pasar por todas las fases — se inteligente y adaptate.
    a. Corrige los issues (tu mismo o via @builder)
    b. Vuelve a pasar por Fase 5
 3. Sigue iterando hasta que @reviewer apruebe
+4. Cuando apruebe, delega a @pm-agent para comentar el resultado en la card
 
 ### Fase 6: Testear
 1. Ejecuta los tests relevantes (no toda la suite si no es necesario)
@@ -63,6 +76,18 @@ Task({
   subagent_type: "builder"
 })
 ```
+
+### Tipos de subagente disponibles
+
+| Agente | Para que |
+|--------|----------|
+| `architect` | Planificar arquitectura, escribir plan en WORKFLOW_STATE.md |
+| `builder` | Implementar codigo (TypeScript/React/Next.js) |
+| `reviewer` | Code review de PRs o cambios |
+| `tester` | Ejecutar tests y diagnosticar fallos |
+| `linter` | ESLint y TypeScript checks |
+| `git-assistant` | Git: branches, commits, PRs |
+| `pm-agent` | Operaciones PM: leer/mover/comentar cards en Trello |
 
 Para tareas independientes, lanza multiples Task en UN SOLO mensaje
 (se ejecutan en paralelo). Para secuencia, usa mensajes separados.

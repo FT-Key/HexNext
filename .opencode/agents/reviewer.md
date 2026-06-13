@@ -48,6 +48,19 @@ Si todo esta bien:
 ✅ Codigo aprobado. Sin issues.
 ```
 
+## Colaboracion con @pm-agent
+
+Cuando termines la review, delega a pm-agent para dejar el resultado en Trello:
+
+```
+Task({
+  description: "Comentar review en card US-00X",
+  prompt: "Anade un comentario en la card [cardId]:
+  '✅ Code review aprobado' o '❌ Bloqueantes: [lista de issues]'",
+  subagent_type: "pm-agent"
+})
+```
+
 ## Reglas
 1. NO modifiques el codigo bajo ninguna circunstancia
 2. Si encuentras 3+ issues similares, menciona el patron, no cada instancia

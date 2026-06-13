@@ -102,6 +102,30 @@
         "webfetch": "deny",
         "websearch": "deny"
       }
+    },
+    "systems-analyst": {
+      "description": "Analista de sistemas: conversa contigo para refinar ideas de negocio, define requisitos y escribe REQUIREMENTS.md",
+      "mode": "all",
+      "temperature": 0.6,
+      "permission": {
+        "edit": { "*": "deny", "REQUIREMENTS.md": "allow", "WORKFLOW_STATE.md": "allow" },
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow"
+      }
+    },
+    "pm-agent": {
+      "description": "Project Management Agent: gestiona boards, cards y checklists en Trello. Los demas agentes le delegan operaciones PM via Task.",
+      "mode": "subagent",
+      "temperature": 0.3,
+      "permission": {
+        "edit": { "*": "deny" },
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
     }
   },
   "permission": {
