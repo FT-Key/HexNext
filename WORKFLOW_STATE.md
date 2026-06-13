@@ -192,6 +192,20 @@ cta: "bg-accent text-accent-foreground hover:bg-accent/80",
 - PR: [#3](https://github.com/FT-Key/HexNext/pull/3)
 - Card Trello: ✅ Done
 
+### US-002 ✅ COMPLETADO
+- Branch: `feat/US-002-filtrar-ordenar-productos`
+- Commit: `4e58787` — `feat(US-002): filtrar y ordenar productos en catálogo`
+- Merge: `809d256` en dev
+- PR: [#1](https://github.com/FT-Key/HexNext/pull/1)
+- Card Trello: ✅ Done
+
+### US-042 ✅ COMPLETADO
+- Branch: `feat/US-042-style-audit`
+- Commit: `95de20a` — `feat: US-042 style audit - apply Emerald Terminal design tokens`
+- Merge: Squash en dev — `d720b34`
+- PR: [#4](https://github.com/FT-Key/HexNext/pull/4)
+- Card Trello: ✅ Done
+
 ## Design System
 ✅ **DESIGN_SYSTEM.md creado** — Paleta "Emerald Terminal"
 - Filosofia: Tech minimalista premium (DigitalOcean × Apple)
@@ -340,50 +354,11 @@ Esto permite usar `<Button variant="cta">Comprar ahora</Button>` con color ambar
 5. Verificar que el modo claro y oscuro se vean correctamente (los colores cambian)
 
 ## Current Phase
-🔀 Mergeando US-002 → dev con resolucion de conflictos de estilos
+✅ US-001, US-002, US-003 y US-042 completados en dev
 
 ## Next Steps
-1. Mergear feat/US-002-filtrar-ordenar-productos → dev
-2. Resolver conflictos en archivos compartidos
-3. Verificar estilos con paleta Emerald Terminal
-4. Crear PR y code review
-
----
-
-### US-003: Página de detalle de producto
-
-#### Requisitos (AC)
-- **AC-1**: Muestra nombre, precio, imágenes (galería), especificaciones técnicas en tabla
-- **AC-2**: Si tiene variantes (color, modelo), se muestran selectores y al cambiar varía el precio/stock
-- **AC-3**: Muestra stock disponible
-- **AC-4**: Botón "Agregar al carrito"
-
-#### Arquitectura
-
-**Core/Ports** (extender interfaces):
-- `core/ports/in/repositories/i-product-repository.ts` — Add `findBySlug()`, `findByProductoPadreId()`
-
-**Core/Use Cases** (nuevo):
-- `core/use-cases/catalog/get-product-by-slug.use-case.ts` — Obtiene producto por slug + sus variantes + categoría
-
-**Adapters/Out** (extender):
-- `adapters/out/mock/data/products.ts` — Agregar 2-3 productos variantes (teclado switches, mouse color)
-- `adapters/out/mock/repositories/mock-product.repository.ts` — Implementar findBySlug y findByProductoPadreId
-
-**Adapters/In** (nueva ruta):
-- `app/(catalog)/productos/[slug]/page.tsx` — Server component con metadata dinámica
-
-**UI Components** (nuevos):
-- `components/features/product-detail.tsx` — Client component principal (use client)
-- `components/features/product-gallery.tsx` — Galería de imágenes con thumbnails
-- `components/features/product-variant-selector.tsx` — Selector de variantes
-- `components/features/product-specs-table.tsx` — Tabla de especificaciones técnicas
-
-**Shared** (nuevo):
-- `shared/utils/get-product-by-slug.ts` — cache() wrapper
-
-**Modificar existente**:
-- `components/features/product-card.tsx` — Envolver en Link a /productos/[slug]
+1. Seleccionar próxima US del backlog para implementar
+2. Continuar con arquitectura hexagonal y buenas prácticas del proyecto
 
 ## Definition of Done
 - [x] REQUIREMENTS.md completo con todas las secciones
@@ -392,5 +367,6 @@ Esto permite usar `<Button variant="cta">Comprar ahora</Button>` con color ambar
 - [x] Cards creadas en Trello (41 cards, 3 listas de backlog + In Progress + Review + Done)
 - [x] Board ID y card IDs registrados en REQUIREMENTS.md para acceso de otros agentes
 - [x] Iniciar implementacion de primera US (US-001)
-- [ ] Iniciar implementacion de US-002
+- [x] Iniciar implementacion de US-002
 - [x] US-003 completada
+- [x] US-042 completada (Style Audit Emerald Terminal)
