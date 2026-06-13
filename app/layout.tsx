@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Figtree } from "next/font/google";
+import { Figtree, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: {
@@ -22,7 +23,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={cn("h-full", "antialiased", "font-sans", figtree.variable)}
+      className={cn("h-full", "antialiased", "font-sans", figtree.variable, jetbrainsMono.variable)}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
