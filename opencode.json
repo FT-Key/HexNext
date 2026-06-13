@@ -1,0 +1,112 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "agent": {
+    "architect": {
+      "description": "Planificador tecnico: disena la arquitectura y crea planes detallados antes de implementar",
+      "mode": "subagent",
+      "temperature": 0.3,
+      "permission": {
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow" },
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    },
+    "builder": {
+      "description": "Implementador: escribe codigo TypeScript/React siguiendo el plan establecido",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    },
+    "reviewer": {
+      "description": "Code reviewer: revisa calidad, bugs, buenas practicas y seguridad del codigo",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    },
+    "tester": {
+      "description": "Tester: ejecuta tests y diagnostica fallos de forma precisa",
+      "mode": "subagent",
+      "temperature": 0.0,
+      "permission": {
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow" },
+        "bash": {
+          "*": "deny",
+          "npm test*": "allow",
+          "npx playwright*": "allow",
+          "npx vitest*": "allow",
+          "npm run test*": "allow"
+        },
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    },
+    "linter": {
+      "description": "Linter: ejecuta ESLint, TypeScript checks y formato",
+      "mode": "subagent",
+      "temperature": 0.0,
+      "permission": {
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow" },
+        "bash": {
+          "*": "deny",
+          "npm run lint*": "allow",
+          "npx tsc*": "allow",
+          "npx prettier*": "allow",
+          "npm run typecheck*": "allow",
+          "npm run format*": "allow",
+          "npm run check*": "allow"
+        },
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    },
+    "git-assistant": {
+      "description": "Git assistant: gestiona branches, commits convencionales y Pull Requests",
+      "mode": "subagent",
+      "temperature": 0.0,
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git branch*": "allow",
+          "git checkout*": "allow",
+          "git add*": "allow",
+          "git commit*": "allow",
+          "git push*": "allow",
+          "git pull*": "allow",
+          "git fetch*": "allow",
+          "git stash*": "allow",
+          "git rebase*": "ask",
+          "git reset*": "ask",
+          "git merge*": "ask"
+        },
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    }
+  },
+  "permission": {
+    "edit": "allow",
+    "bash": "allow",
+    "task": "allow"
+  }
+}
