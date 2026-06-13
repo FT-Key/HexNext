@@ -1,88 +1,111 @@
 # Reglas del equipo multi-agente
 
-## Flujo de trabajo para historias de usuario
+## Flujo de trabajo para historias de usuario (Quality Gate Loop)
 
 Cuando recibas una solicitud de implementacion, sigue este proceso.
-NO es obligatorio pasar por todas las fases — se inteligente y adaptate.
+El flujo es un LOOP entre implementacion y quality gates hasta que todo pase.
 
-### Fase 0: Analizar (si no hay requisitos claros)
+### Fase 0: SETUP (pre-requisitos)
+
 1. Si el usuario tiene una idea vaga o no existe REQUIREMENTS.md:
    a. Indica al usuario que puede cambiar al agente @systems-analyst
       (presionando Tab) para definir los requisitos primero
    b. Una vez que exista REQUIREMENTS.md, lo usaras como entrada
-2. Si ya existe REQUIREMENTS.md, leelo antes de empezar cualquier
-   implementacion para entender el contexto de negocio y las user stories
-3. Actualiza WORKFLOW_STATE.md con la referencia a las US a implementar
+2. Si no existe DESIGN_SYSTEM.md:
+   a. Indica al usuario que puede cambiar al agente @design-strategist
+      (presionando Tab) para definir la vision de diseno primero
+3. Si ya existe REQUIREMENTS.md, leelo para entender el contexto
+4. Lee WORKFLOW_STATE.md (solo el indice, no los historiales previos)
+5. Busca la US en REQUIREMENTS.md y obten el Trello cardId
+6. **@pm-agent**: Leer card de Trello (descripcion + acceptance criteria)
+7. **@pm-agent**: Mover card a "In Progress"
+8. **@state-manager**: Crear `workflow-history/US-XXX.md` con card info y actualizar STATE
 
-### Fase 0.5: Disenar (si no hay vision de diseno definida)
-1. Si no existe DESIGN_SYSTEM.md, indica al usuario que puede cambiar al
-   agente @design-strategist (presionando Tab) para definir la vision de
-   diseno primero
-2. Una vez que exista DESIGN_SYSTEM.md, el flujo lo usara como referencia
-   visual durante toda la implementacion
-3. Actualiza WORKFLOW_STATE.md referenciando DESIGN_SYSTEM.md
+### Fase 1: PLAN (si afecta a multiples archivos)
 
-### Fase 1: Entender
-1. Si la solicitud es ambigua, haz preguntas al usuario
-2. Lee WORKFLOW_STATE.md para ver si hay contexto previo
-3. Define claramente el alcance antes de empezar
+1. Si el cambio es trivial (1-2 archivos), puedes saltar esta fase
+2. Escribe el plan en `workflow-history/US-XXX.md` seccion ## Plan
+3. Define: archivos a crear/modificar, componentes, API routes, tipos
+4. Si el plan es complejo, delega a @architect via Task tool
+5. **@state-manager**: Actualizar STATE (Phase: P1 - Plan)
+6. NO implementes sin plan si afecta a multiples archivos
 
-### Fase 2: Explorar
-1. Usa @explore para entender la estructura actual del proyecto
-2. Busca patrones existentes, componentes similares, convenciones
-3. Entiende las dependencias y configuracion actual
+### Fase 2: IMPLEMENT
 
-### Fase 3: Planificar (para cambios > 1 archivo)
-1. Escribe el plan en WORKFLOW_STATE.md seccion ## Plan
-2. Define: archivos a crear/modificar, componentes, API routes, tipos
-3. Si el plan es complejo, delega a @architect via Task tool
-4. NO implementes sin plan si afecta a multiples archivos
+1. Lee el plan de `workflow-history/US-XXX.md` si existe
+2. Carga skills relevantes (`skill({ name: "..." })`):
+   - `hexagonal-architecture` — siempre que toques estructura
+   - `design-principles` — siempre (SOLID, KISS, DRY, YAGNI)
+   - `design-system` + `tailwind-styles` — si tocas UI
+   - `error-handling` — si implementas errores
+   - `api-response` — si creas endpoints
+   - `security` — si tocas auth/validacion
+   - `forms-validation` — si creas formularios
+   - `mongodb-patterns` — si tocas DB
+   - `dependency-injection` — si configuras DI
+   - `logging` — si agregas logs
+   - `design-patterns` — si usas patrones
+   - `testing-strategy` — si escribes tests
+3. Para implementacion directa: hazlo tu mismo
+4. Para implementacion compleja: delega a @builder via Task tool
+5. Ejecuta `npm run build` para verificar compilacion
+6. **@state-manager**: Actualizar STATE (Phase: P2 - Implement)
 
-### Fase 4: Implementar
-1. Lee el plan de WORKFLOW_STATE.md si existe
-2. Busca la US en REQUIREMENTS.md y obten el Trello cardId
-3. Delega a @pm-agent para leer la card (descripcion + AC)
-4. Si la US involucra componentes UI con diseno definido en DESIGN_SYSTEM.md,
-   carga el skill `design-system` y revisa los tokens antes de codificar
-5. Para implementacion directa: hazlo tu mismo (build)
-6. Para implementacion compleja: delega a @builder via Task tool
-7. Al empezar, pide a @pm-agent mover la card a In Progress; al terminar, a Review
-8. Sigue las convenciones de Next.js App Router
+### Fase 3: QUALITY GATES (LOOP)
 
-### Fase 4.5: Revisar diseno (si la US tiene componentes UI)
-1. Si la US involucra componentes visuales nuevos o modificados,
-   delega a @designer via Task tool para design review
-2. El @designer verifica fidelidad visual contra DESIGN_SYSTEM.md
-3. Si hay issues bloqueantes:
-   a. Corrige los issues (tu mismo o via @builder)
-   b. Vuelve a pasar por Fase 4.5
-4. Sigue iterando hasta que @designer apruebe el diseno
+Ejecuta los gates EN PARALELO via Task tool cuando sea posible.
 
-### Fase 5: Revisar
-1. Delega a @reviewer via Task tool para code review
-2. Si hay issues bloqueantes:
+Carga los gates que apliquen a la US:
 
-   a. Corrige los issues (tu mismo o via @builder)
-   b. Vuelve a pasar por Fase 5
-3. Sigue iterando hasta que @reviewer apruebe
-4. Cuando apruebe, delega a @pm-agent para comentar el resultado en la card
+**Gate 3.1 Code Review (@reviewer)**
+- Revisa calidad, bugs, buenas practicas, seguridad
+- Reporta issues bloqueantes y no bloqueantes
+- Verifica que se sigan las convenciones del proyecto
 
-### Fase 6: Testear
-1. Ejecuta los tests relevantes (no toda la suite si no es necesario)
-2. Delega a @tester via Task tool
-3. Si fallan:
-   a. Diagnostica si es MISSING_BEHAVIOR o TEST_BROKEN
-   b. Corrige y vuelve a Fase 5-6
+**Gate 3.2 Tests (@tester)**
+- Ejecuta tests relevantes (no toda la suite si no es necesario)
+- Si fallan: diagnostica MISSING_BEHAVIOR vs TEST_BROKEN
+- Reporta resultados detallados
 
-### Fase 7: Lint + TypeScript
-1. Delega a @linter via Task tool para ESLint y TypeScript checks
-2. Si hay errores, corrigelos y vuelve a verificar
+**Gate 3.3 Lint + TypeScript (@linter)**
+- Ejecuta ESLint y TypeScript checks
+- Aplica auto-fix si es posible
+- Reporta errores restantes
 
-### Fase 8: Commit + PR
-1. Delega a @git-assistant via Task tool
-2. Crea un branch con nombre descriptivo feat/nombre o fix/nombre
-3. Commit con conventional commits: feat|fix|chore|refactor|docs|test
-4. Push y crea Pull Request si aplica
+**Gate 3.4 Design Review (@designer)** (solo si la US toca UI)
+- Verifica fidelidad visual contra DESIGN_SYSTEM.md
+- Revisa colores, tipografia, espaciado, tokens
+- Reporta issues de diseno
+
+**Al terminar los gates:**
+1. **@state-manager**: Recopilar resultados en `workflow-history/US-XXX.md`
+2. Evaluar resultados:
+   - Si TODOS los gates pasaron → continuar a Fase 4
+   - Si ALGUN gate fallo → **volver a Fase 2** (corregir + rebuild)
+   - El bucle se repite hasta que todos los gates pasen
+
+### Fase 4: FINALIZE
+
+1. **@state-manager**: Escribir resumen final en `workflow-history/US-XXX.md` con:
+   - Archivos creados/modificados
+   - Decisiones tecnicas clave
+   - Resultados de todos los gates
+2. **@state-manager**: Actualizar STATE (marcar US en History, limpiar Current)
+
+### Fase 5: GIT + PR
+
+1. **@git-assistant**: Crear branch con nombre descriptivo (`feat/` o `fix/`)
+2. **@git-assistant**: Commit con conventional commits (`feat|fix|chore|refactor`)
+3. **@git-assistant**: Push y crear Pull Request
+4. Si el usuario autorizo merge explicitamente → mergear
+5. **@state-manager**: Actualizar STATE con branch y PR link
+
+### Fase 6: TRELLO DONE
+
+1. **@pm-agent**: Mover card a "Done"
+2. **@state-manager**: Marcar US como ✅ Done en STATE
+
+---
 
 ## Como delegar a subagentes
 
@@ -100,7 +123,7 @@ Task({
 
 | Agente | Para que |
 |--------|----------|
-| `architect` | Planificar arquitectura, escribir plan en WORKFLOW_STATE.md |
+| `architect` | Planificar arquitectura, escribir plan en workflow-history/ |
 | `builder` | Implementar codigo (TypeScript/React/Next.js) |
 | `reviewer` | Code review de PRs o cambios |
 | `tester` | Ejecutar tests y diagnosticar fallos |
@@ -108,6 +131,8 @@ Task({
 | `git-assistant` | Git: branches, commits, PRs |
 | `pm-agent` | Operaciones PM: leer/mover/comentar cards en Trello |
 | `designer` | Design review: verificar fidelidad visual contra DESIGN_SYSTEM.md |
+| `state-manager` | Mantener WORKFLOW_STATE.md y workflow-history/ |
+| `git-specialist` | Git/GitHub experto — solo Git, NO explora codigo |
 
 ### Agentes de dialogo (mode: all)
 
@@ -116,15 +141,22 @@ Task({
 | `systems-analyst` | Analizar requisitos de negocio, escribir REQUIREMENTS.md |
 | `design-strategist` | Definir vision de diseno, escribir DESIGN_SYSTEM.md |
 
-Para tareas independientes, lanza multiples Task en UN SOLO mensaje
-(se ejecutan en paralelo). Para secuencia, usa mensajes separados.
+### Como cargar una skill
+
+Las skills proveen conocimiento contextual para tareas especificas:
+
+```
+skill({ name: "hexagonal-architecture" })
+```
+
+Se pueden cargar multiples skills al inicio de una tarea.
 
 ## Tareas paralelas vs secuenciales
 
-- **Paralelo**: tareas independientes (ej: crear 2 componentes que no se relacionan)
+- **Paralelo**: tareas independientes (ej: gates en Fase 3, crear 2 componentes no relacionados)
   → Pon todos los Task en un solo mensaje
 
-- **Secuencial**: tareas que dependen una de otra (ej: implementar, luego revisar)
+- **Secuencial**: tareas que dependen una de otra (ej: implementar, luego gates)
   → Task en mensajes separados, esperando resultado de cada uno
 
 ## Convenciones de Next.js (App Router)
@@ -141,42 +173,12 @@ Para tareas independientes, lanza multiples Task en UN SOLO mensaje
 - Early returns sobre if-else anidados
 - No dejar console.logs en produccion
 
-## Skills del proyecto
-
-El proyecto tiene skills para estandarizar el conocimiento. Los subagentes
-deben cargarlos con `skill({ name: "..." })` segun corresponda.
-
-### Lista de skills
-
-| Skill | Cuando cargarlo |
-|-------|----------------|
-| `hexagonal-architecture` | Al planificar, implementar o revisar estructura |
-| `mongodb-patterns` | Al trabajar con persistencia MongoDB |
-| `design-principles` | Siempre (SOLID, KISS, DRY, YAGNI) |
-| `design-patterns` | Al usar patrones como Factory, Result, etc. |
-| `tailwind-styles` | Al crear o modificar componentes UI |
-| `testing-strategy` | Al escribir o ejecutar tests |
-| `error-handling` | Al implementar errores de dominio o API |
-| `api-response` | Al crear endpoints API |
-| `security` | Al implementar auth, validacion o headers |
-| `dependency-injection` | Al configurar el contenedor DI |
-| `logging` | Al anadir logs en cualquier capa |
-| `forms-validation` | Al crear formularios con validacion |
-| `design-system` | Al definir tokens, colores, componentes o revisar fidelidad visual |
-
-### Como cargar una skill
-
-```
-skill({ name: "hexagonal-architecture" })
-```
-
-Se pueden cargar multiples skills al inicio de una tarea.
-
 ## Reglas generales
 
 - NO modifiques codigo sin entenderlo primero
-- Cada subagente actualiza SOLO su seccion en WORKFLOW_STATE.md
-- Preserva el contenido existente de WORKFLOW_STATE.md
-- Si encuentras un problema que no puedes resolver, informa al usuario
-- Despues de completar una tarea, actualiza WORKFLOW_STATE.md con el resumen
+- El flujo es un LOOP: si los quality gates fallan, vuelve a implementar
+- Cada subagente escribe SOLO en los archivos que tiene permitido
+- WORKFLOW_STATE.md debe mantenerse LIVIANO (< 50 lineas)
+- Los detalles de cada US van en workflow-history/US-XXX.md
+- No leas historiales previos completos a menos que sean necesarios
 - Define claramente "Definition of Done" antes de marcar como completado

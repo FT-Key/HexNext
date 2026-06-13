@@ -7,7 +7,7 @@
       "mode": "subagent",
       "temperature": 0.3,
       "permission": {
-        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow" },
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow", "workflow-history/*": "allow" },
         "bash": "deny",
         "task": "deny",
         "webfetch": "deny",
@@ -42,7 +42,7 @@
       "mode": "subagent",
       "temperature": 0.0,
       "permission": {
-        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow" },
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow", "workflow-history/*": "allow" },
         "bash": {
           "*": "deny",
           "npm test*": "allow",
@@ -60,7 +60,7 @@
       "mode": "subagent",
       "temperature": 0.0,
       "permission": {
-        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow" },
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow", "workflow-history/*": "allow" },
         "bash": {
           "*": "deny",
           "npm run lint*": "allow",
@@ -140,15 +140,42 @@
       }
     },
     "designer": {
-      "description": "Disenador UX/UI tecnico: aplica los tokens de DESIGN_SYSTEM.md, revisa fidelidad visual de componentes en Fase 4.5.",
+      "description": "Disenador UX/UI tecnico: aplica los tokens de DESIGN_SYSTEM.md, revisa fidelidad visual de componentes.",
       "mode": "subagent",
       "temperature": 0.4,
       "permission": {
-        "edit": { "*": "deny", "DESIGN_SYSTEM.md": "allow", "WORKFLOW_STATE.md": "allow" },
+        "edit": { "*": "deny", "DESIGN_SYSTEM.md": "allow", "WORKFLOW_STATE.md": "allow", "workflow-history/*": "allow" },
         "bash": "deny",
         "task": "deny",
         "webfetch": "allow",
         "websearch": "allow"
+      }
+    },
+    "state-manager": {
+      "description": "State Manager: mantiene WORKFLOW_STATE.md y workflow-history/. Inicializa, actualiza fases, registra resultados de quality gates y escribe resumen final.",
+      "mode": "subagent",
+      "temperature": 0.2,
+      "permission": {
+        "edit": { "*": "deny", "WORKFLOW_STATE.md": "allow", "workflow-history/*": "allow" },
+        "bash": "deny",
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
+      }
+    },
+    "git-specialist": {
+      "description": "Git Specialist - operador experto en Git local + GitHub remoto. NO explora codigo, solo Git y GitHub. Disponible para dialogo directo.",
+      "mode": "all",
+      "temperature": 0.0,
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "git *": "allow"
+        },
+        "task": "deny",
+        "webfetch": "deny",
+        "websearch": "deny"
       }
     }
   },
