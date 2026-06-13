@@ -150,6 +150,11 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - ESLint: ✅ Solo 1 warning aceptable (`<img>` en product-gallery, placeholder para MVP)
 - TypeScript: ✅ Strict mode sin errores
 
+### US-002 Lint
+- Build: ✅ Sin errores
+- ESLint: ✅ 1 warning (react-hooks/exhaustive-deps en filter-sidebar.tsx — no bloqueante)
+- TypeScript: ✅ Strict mode sin errores
+
 ## Commit / PR Status
 
 ### US-001 ✅ COMPLETADO
@@ -157,52 +162,23 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - Commit: `451f9df` — `feat(US-001): navegar catálogo por categorías`
 - Merge: Squash en dev — `7d98b0c`
 - PR: [#2](https://github.com/FT-Key/HexNext/pull/2)
-- Card Trello: 👀 Review (pendiente mover a Done)
+- Card Trello: ✅ Done
 
-## Current Phase
-US-003 EN REVIEW — Code review aprobado ✅
+### US-002 ✅ COMPLETADO
+- Branch: `feat/US-002-filtrar-ordenar-productos`
+- Merge: Merge a dev completado (junio 2026)
+- Card Trello: ✅ Done
+
+### US-003 ✅ COMPLETADO
+- Branch: `feat/US-003-detalle-producto`
+- Merge: Merge a dev completado (commit 65fa13d)
+- PR: [#3](https://github.com/FT-Key/HexNext/pull/3)
+- Card Trello: ✅ Done
 
 ## Next Steps
-1. Mover card US-003 a Review en Trello
-2. Implementar correcciones de M-1 a M-7
-3. Avanzar a US-002 o US-004
-
----
-
-### US-003: Página de detalle de producto
-
-#### Requisitos (AC)
-- **AC-1**: Muestra nombre, precio, imágenes (galería), especificaciones técnicas en tabla
-- **AC-2**: Si tiene variantes (color, modelo), se muestran selectores y al cambiar varía el precio/stock
-- **AC-3**: Muestra stock disponible
-- **AC-4**: Botón "Agregar al carrito"
-
-#### Arquitectura
-
-**Core/Ports** (extender interfaces):
-- `core/ports/in/repositories/i-product-repository.ts` — Add `findBySlug()`, `findByProductoPadreId()`
-
-**Core/Use Cases** (nuevo):
-- `core/use-cases/catalog/get-product-by-slug.use-case.ts` — Obtiene producto por slug + sus variantes + categoría
-
-**Adapters/Out** (extender):
-- `adapters/out/mock/data/products.ts` — Agregar 2-3 productos variantes (teclado switches, mouse color)
-- `adapters/out/mock/repositories/mock-product.repository.ts` — Implementar findBySlug y findByProductoPadreId
-
-**Adapters/In** (nueva ruta):
-- `app/(catalog)/productos/[slug]/page.tsx` — Server component con metadata dinámica
-
-**UI Components** (nuevos):
-- `components/features/product-detail.tsx` — Client component principal (use client)
-- `components/features/product-gallery.tsx` — Galería de imágenes con thumbnails
-- `components/features/product-variant-selector.tsx` — Selector de variantes
-- `components/features/product-specs-table.tsx` — Tabla de especificaciones técnicas
-
-**Shared** (nuevo):
-- `shared/utils/get-product-by-slug.ts` — cache() wrapper
-
-**Modificar existente**:
-- `components/features/product-card.tsx` — Envolver en Link a /productos/[slug]
+1. Iniciar implementación de **US-042**: Style Audit — aplicar Emerald Terminal a componentes de US-001, US-002 y US-003
+2. Card creada en Trello: 📋 Backlog (Must Have - MVP) — `6a2db3148d92f5283331dccf`
+3. Después de US-042, continuar con la siguiente US del backlog MVP
 
 ## Definition of Done
 - [x] REQUIREMENTS.md completo con todas las secciones
@@ -211,4 +187,383 @@ US-003 EN REVIEW — Code review aprobado ✅
 - [x] Cards creadas en Trello (41 cards, 3 listas de backlog + In Progress + Review + Done)
 - [x] Board ID y card IDs registrados en REQUIREMENTS.md para acceso de otros agentes
 - [x] Iniciar implementacion de primera US (US-001)
-- [ ] Iniciar implementacion de US-002
+- [x] US-002: Filtrar y ordenar productos implementado
+
+---
+
+### US-002: Filtrar y ordenar productos
+
+**Objetivo**: Permitir al cliente filtrar productos por precio, marca y atributos clave de la categoría, y ordenarlos por precio, nombre, fecha o popularidad. Los filtros se reflejan en la URL para poder compartir la búsqueda.
+
+**Card Trello**: `6a2d364577e761ae7d231e3d` — https://trello.com/c/W85Jfclk
+
+#### Arquitectura (Hexagonal)
+
+**Core/Domain** — cambios en entidad existente:
+- `core/domain/entities/product.ts` — Agregar campo `marca: string` a `ProductProps` y clase `Product`
+
+**Core/Use Cases** — nuevo caso de uso:
+- `core/use-cases/catalog/get-filtered-products.use-case.ts` — Recibe slug de categoría + filtros + ordenación, devuelve productos filtrados + metadatos de opciones de filtro disponibles
+- `core/use-cases/catalog/types.ts` — Tipos compartidos: `ProductFilters`, `SortOption`, `FilteredResult`, `FilterOptions`
+
+**Adapters/Out** — modificar datos mock:
+- `adapters/out/mock/data/products.ts` — Agregar `marca` a todos los productos (22 productos)
+- `adapters/out/mock/repositories/mock-product.repository.ts` — Sin cambios (ya tiene `findAll()`)
+
+**Adapters/In** — modificar página existente:
+- `app/(catalog)/categorias/[slug]/page.tsx` — Aceptar `searchParams`, usar nuevo caso de uso, pasar datos a componentes de filtro
+
+**UI Components** — nuevos componentes:
+- `components/features/filter-sidebar.tsx` — Sidebar con filtros (client component)
+- `components/features/sort-dropdown.tsx` — Dropdown de ordenación (client component)
+- `components/features/product-card.tsx` — Modificar para mostrar marca
+
+**Shared** — nuevo wrapper:
+- `shared/utils/get-filtered-products.ts` — Wrapper con `React.cache()` para el nuevo caso de uso
+
+---
+
+#### Archivos a crear (6 archivos)
+
+1. **`core/use-cases/catalog/types.ts`**
+   - `SortOption` type: `'precio-asc' | 'precio-desc' | 'nombre-asc' | 'nombre-desc' | 'fecha-desc' | 'popular-desc'`
+   - `ProductFilters` interface: `{ precioMin?: number; precioMax?: number; marcas?: string[]; specs?: Record<string, string[]> }`
+   - `AttributeFilterOption` interface: `{ nombre: string; valores: { valor: string; count: number }[] }`
+   - `FilterOptions` interface: `{ brands: { nombre: string; count: number }[]; attributeFilters: AttributeFilterOption[] }`
+   - `FilteredResult` interface: `{ products: Product[]; category: Category; filterOptions: FilterOptions }`
+
+2. **`core/use-cases/catalog/get-filtered-products.use-case.ts`**
+   - Clase `GetFilteredProductsUseCase`
+   - Constructor: `(categoryRepo: ICategoryRepository, productRepo: IProductRepository)`
+   - Método `execute(slug: string, filters: ProductFilters, sort: SortOption): Promise<FilteredResult>`
+   - Flujo:
+     1. Obtener categoría por slug (como existe)
+     2. Obtener subcategorías
+     3. Obtener productos de categoría + subcategorías
+     4. Extraer `FilterOptions` del set completo de productos ANTES de filtrar (brands disponibles, valores de specs)
+     5. Aplicar filtros sobre los productos (in-memory):
+        - Filtro por `precioMin`/`precioMax`
+        - Filtro por `marcas` (array de strings)
+        - Filtro por `specs` (coincidencia exacta en `especificaciones` → `{ nombre, valor }`)
+     6. Aplicar ordenación:
+        - `precio-asc`: sort por `precio` ascendente
+        - `precio-desc`: sort por `precio` descendente
+        - `nombre-asc`: sort por `nombre` A-Z
+        - `nombre-desc`: sort por `nombre` Z-A
+        - `fecha-desc`: sort por `createdAt` descendente (más nuevo)
+        - `popular-desc`: sort por `stock` descendente (más vendido/popular como proxy)
+     7. Retornar `FilteredResult`
+
+3. **`shared/utils/get-filtered-products.ts`**
+   - Función `getFilteredProducts(slug, filters, sort)` con `React.cache()`
+   - Instancia `MockCategoryRepository`, `MockProductRepository`, `GetFilteredProductsUseCase`
+   - Llama a `useCase.execute()`
+
+4. **`components/features/filter-sidebar.tsx`** (client component, `'use client'`)
+   - Props: `FilterSidebarProps`
+     ```typescript
+     interface FilterSidebarProps {
+       filterOptions: FilterOptions;
+       categorySlug: string;
+       currentFilters: {
+         precioMin?: string;
+         precioMax?: string;
+         marcas?: string[];
+         specs?: Record<string, string[]>;
+       };
+       currentSort?: SortOption;
+     }
+     ```
+   - Sección "Precio":
+     - Dos inputs numéricos: "Mín" y "Máx"
+     - Al cambiar → actualiza URL con `precioMin`/`precioMax` (debounced o con botón "Aplicar")
+   - Sección "Marca":
+     - Checkboxes para cada marca disponible (con count de productos)
+     - Al seleccionar/deseleccionar → actualiza URL con `marca=AMD,NVIDIA`
+   - Sección "Especificaciones" (dinámico por categoría):
+     - Grupo colapsable por cada spec (ej: "Socket", "Capacidad")
+     - Checkboxes para cada valor disponible (con count)
+     - Al seleccionar → actualiza URL con query param del spec (ej: `socket=AM5,LGA1700`)
+   - Botón "Limpiar filtros" que remueve todos los searchParams
+
+   Estrategia de actualización de URL:
+   - Usar `useRouter` + `useSearchParams` de `next/navigation`
+   - En cada cambio de filtro, construir nueva URL con `URLSearchParams`
+   - `router.replace(pathname + "?" + params.toString(), { scroll: false })`
+   - Esto desencadena un re-render del Server Component que recibe los nuevos `searchParams`
+
+5. **`components/features/sort-dropdown.tsx`** (client component, `'use client'`)
+   - Props: `SortDropdownProps`
+     ```typescript
+     interface SortDropdownProps {
+       currentSort?: SortOption;
+       categorySlug: string;
+       currentFilters: Record<string, string>; // other search params to preserve
+     }
+     ```
+   - Select/dropdown con opciones:
+     - `nombre-asc`: "Nombre A-Z"
+     - `nombre-desc`: "Nombre Z-A"
+     - `precio-asc`: "Menor precio"
+     - `precio-desc`: "Mayor precio"
+     - `fecha-desc`: "Más nuevos"
+     - `popular-desc`: "Más populares"
+   - Al cambiar → actualiza URL con `orden` param
+
+6. **`components/ui/label.tsx`** — Componente shadcn/ui Label (necesario para los checkboxes y filtros)
+   - Añadir mediante `npx shadcn@latest add label`
+
+7. **`components/ui/checkbox.tsx`** — Componente shadcn/ui Checkbox
+   - Añadir mediante `npx shadcn@latest add checkbox`
+
+8. **`components/ui/separator.tsx`** — Componente shadcn/ui Separator (opcional, para dividir secciones del sidebar)
+   - Añadir mediante `npx shadcn@latest add separator`
+
+#### Archivos a modificar (4 archivos)
+
+1. **`core/domain/entities/product.ts`**
+   - Agregar `marca: string` a `ProductProps` interface
+   - Agregar `public readonly marca: string` a la clase `Product`
+   - Agregar `this.marca = props.marca` en el constructor
+
+2. **`adapters/out/mock/data/products.ts`**
+   - Agregar `marca` a cada uno de los 22 productos mock. Marcas a asignar:
+     - `prod-1` (Ryzen 7600X): `"AMD"`
+     - `prod-2` (i5-14600K): `"Intel"`
+     - `prod-3` (Ryzen 7800X3D): `"AMD"`
+     - `prod-4` (ASUS B650-A): `"ASUS"`
+     - `prod-5` (Gigabyte Z790): `"Gigabyte"`
+     - `prod-6` (Corsair Vengeance): `"Corsair"`
+     - `prod-7` (Kingston Fury): `"Kingston"`
+     - `prod-8` (WD SN850X): `"Western Digital"`
+     - `prod-9` (RTX 4070 Super): `"NVIDIA"`
+     - `prod-10` (RX 7800 XT): `"AMD"`
+     - `prod-11` (Corsair RM750e): `"Corsair"`
+     - `prod-12` (NZXT H5 Flow): `"NZXT"`
+     - `prod-13` (Redragon K552): `"Redragon"`
+     - `prod-14` (Logitech G502): `"Logitech"`
+     - `prod-15` (HyperX Cloud II): `"HyperX"`
+     - `prod-16` (Samsung Odyssey): `"Samsung"`
+     - `prod-17` (Corsair T3 Rush): `"Corsair"`
+     - `prod-18` (TP-Link Archer): `"TP-Link"`
+     - `prod-19` (i3-14100F): `"Intel"`
+     - `prod-20` (Samsung 990 Pro): `"Samsung"`
+     - `prod-21` (RTX 4090): `"NVIDIA"`
+     - `prod-22` (Logitech G Pro X): `"Logitech"`
+
+3. **`app/(catalog)/categorias/[slug]/page.tsx`**
+   - Actualizar props de página para recibir `searchParams`: `params: Promise<{ slug: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }>`
+   - Extraer filtros de `searchParams`:
+     - `precioMin` → número (o undefined)
+     - `precioMax` → número (o undefined)
+     - `marca` → string separado por coma → array (o undefined)
+     - Specs dinámicos: cualquier otro param que no sea `precioMin`, `precioMax`, `marca`, `orden` → se interpreta como filtro de spec
+     - `orden` → `SortOption` (default: `'nombre-asc'`)
+   - Llamar a `getFilteredProducts(slug, filters, sort)` en lugar de `getProductsByCategory(slug)`
+   - Agregar `FilterSidebar` dentro del `<aside>` existente
+   - Agregar `SortDropdown` arriba del grid de productos (entre el breadcrumb y los productos)
+   - Pasar `filterOptions` a `FilterSidebar`
+   - El grid de productos se mantiene igual, solo cambia la fuente de datos
+
+4. **`components/features/product-card.tsx`**
+   - Agregar visualización de `marca` (texto pequeño arriba del nombre)
+   - Opcional: badge de marca con estilo sutil
+
+#### Tipos e interfaces nuevos
+
+```typescript
+// core/use-cases/catalog/types.ts
+
+export type SortOption =
+  | 'precio-asc'
+  | 'precio-desc'
+  | 'nombre-asc'
+  | 'nombre-desc'
+  | 'fecha-desc'
+  | 'popular-desc';
+
+export interface ProductFilters {
+  precioMin?: number;
+  precioMax?: number;
+  marcas?: string[];
+  specs?: Record<string, string[]>;
+}
+
+export interface AttributeFilterOption {
+  nombre: string;
+  // URL-safe key derived from nombre (lowercase, sin espacios, sin acentos)
+  key: string;
+  valores: Array<{ valor: string; count: number }>;
+}
+
+export interface FilterOptions {
+  brands: Array<{ nombre: string; count: number }>;
+  specFilters: AttributeFilterOption[];
+  precioMin: number;
+  precioMax: number;
+}
+
+export interface FilteredResult {
+  products: Product[];
+  category: Category;
+  subcategories: Category[];
+  filterOptions: FilterOptions;
+}
+```
+
+#### Dependencias nuevas
+
+- `@radix-ui/react-checkbox` (para shadcn/ui checkbox)
+- `@radix-ui/react-label` (para shadcn/ui label)
+- `@radix-ui/react-separator` (para shadcn/ui separator)
+- Se instalan automáticamente al ejecutar `npx shadcn@latest add`
+
+#### Flujo de datos completo
+
+```
+1. Usuario visita: /categorias/procesadores?precioMin=100000&marca=AMD,Intel&orden=precio-asc
+
+2. Página Server Component extrae searchParams:
+   { precioMin: "100000", marca: "AMD,Intel", orden: "precio-asc" }
+
+3. Construye ProductFilters: { precioMin: 100000, marcas: ["AMD","Intel"] }
+   SortOption: "precio-asc"
+
+4. Llama a getFilteredProducts("procesadores", filters, sort)
+   └─ React.cache() deduplica si se llama múltiples veces
+
+5. GetFilteredProductsUseCase.execute():
+   a. categoryRepo.findBySlug("procesadores") → categoría
+   b. categoryRepo.findByPadreId(catId) → subcategorías (vacío en este caso)
+   c. productRepo.findByCategoriaIds(["cat-2"]) → [prod-1, prod-2, prod-3, prod-19]
+   d. Extrae FilterOptions del set sin filtrar:
+      - brands: [{ nombre: "AMD", count: 2 }, { nombre: "Intel", count: 2 }]
+      - specFilters: [
+          { nombre: "Socket", key: "socket", valores: [{ valor: "AM5", count: 2 }, { valor: "LGA1700", count: 2 }] },
+          { nombre: "Núcleos", key: "nucleos", valores: [...] },
+          ...
+        ]
+      - precioMin: 119999, precioMax: 449999
+   e. Filtra por precioMin=100000 → todos pasan (todos > 100000)
+   f. Filtra por marcas=["AMD","Intel"] → todos pasan
+   g. Ordena por precio ascendente: prod-19 ($119999), prod-1 ($289999), prod-2 ($329999), prod-3 ($449999)
+   h. Retorna FilteredResult
+
+6. Página renderiza:
+   ┌─────────────────────────────────────┐
+   │ Breadcrumb: Inicio / Procesadores    │
+   │                                      │
+   │  [SortDropdown ▼]  [X productos]     │
+   │                                      │
+   ├──────────┬──────────────────────────┤
+   │ Filtros  │  ProductCard grid         │
+   │          │  ┌─────┐ ┌─────┐ ┌─────┐ │
+   │ Precio   │  │i3   │ │Ryzen│ │i5   │ │
+   │ [100k]   │  │14100│ │7600X│ │14600│ │
+   │ [500k]   │  │     │ │     │ │     │ │
+   │          │  └─────┘ └─────┘ └─────┘ │
+   │ Marca    │  ┌─────┐ ┌─────┐         │
+   │ ☑ AMD(2) │  │Ryzen│ │i5   │         │
+   │ ☑ Intel(2)│  │7800 │ │14600│         │
+   │          │  │X3D  │ │K    │         │
+   │ Socket   │  └─────┘ └─────┘         │
+   │ ☑ AM5(2) │                          │
+   │ ☑ LGA1700│                          │
+   │ (2)      │                          │
+   │          │                          │
+   │ [Limpiar]│                          │
+   └──────────┴──────────────────────────┘
+
+7. Si usuario cambia filtro (ej: desmarca "Intel"):
+   a. FilterSidebar actualiza URL: /categorias/procesadores?precioMin=100000&marca=AMD&orden=precio-asc
+   b. Next.js re-renderiza la página con nuevos searchParams
+   c. Flujo vuelve a paso 2
+
+8. Footer/loading states:
+   - Loading: Skeleton del grid de productos (ya existe en loading.tsx)
+   - Empty state: "No hay productos con los filtros seleccionados" con botón "Limpiar filtros"
+   - Error state: error.tsx existente maneja errores
+```
+
+#### Componentes UI — especificaciones detalladas
+
+**FilterSidebar** (`'use client'`):
+| Prop | Tipo | Descripción |
+|------|------|-------------|
+| `filterOptions` | `FilterOptions` | Opciones disponibles para filtros (brands, specs, rangos de precio) |
+| `categorySlug` | `string` | Slug de categoría actual para construir URLs |
+| `currentFilters` | `{ precioMin?: string; precioMax?: string; marcas?: string[]; specs?: Record<string, string[]> }` | Filtros activos actualmente |
+| `currentSort?` | `SortOption` | Ordenación actual (para preservar al cambiar filtros) |
+| `productCount` | `number` | Cantidad de productos resultantes después de filtrar |
+
+Estado interno:
+- `localPrecioMin` / `localPrecioMax`: estado local para los inputs (para permitir escribir sin hacer submit instantáneo)
+- Al hacer blur o presionar Enter → actualiza URL
+
+**SortDropdown** (`'use client'`):
+| Prop | Tipo | Descripción |
+|------|------|-------------|
+| `currentSort` | `SortOption` | Opción de ordenación activa |
+| `categorySlug` | `string` | Slug para construir URLs |
+| `currentFilters` | `Record<string, string>` | Resto de filtros a preservar en URL |
+| `productCount` | `number` | Cantidad de productos (para mostrar "N productos") |
+
+#### Consideraciones
+
+**Rendimiento**:
+- El filtrado es in-memory sobre el resultado de `findByCategoriaIds()` — aceptable para MVP con datos mock (~22 productos)
+- Con MongoDB real, el filtrado se movería al repositorio (query a DB) pero la interfaz del use case seguiría siendo la misma
+- `React.cache()` evita duplicar fetch entre layout y página
+
+**Seguridad**:
+- Los searchParams se sanitizan: valores no numéricos en precio se ignoran, marcas se validan contra valores conocidos
+- No hay SQL injection (no hay SQL)
+- Los spec keys se sanitizan a lowercase alphanumeric
+
+**Edge cases**:
+- **Sin filtros**: Muestra todos los productos de la categoría, ordenados por defecto (`nombre-asc`)
+- **Filtro sin resultados**: Empty state con mensaje "No hay productos con los filtros seleccionados" + botón "Limpiar filtros"
+- **Filtro inválido**: Si `precioMin` > `precioMax`, se ignoran ambos
+- **Marca no existente**: Se ignora (no hay productos que coincidan)
+- **URL maliciosa**: `precioMin=abc` → se ignora (NaN check)
+- **Spec key desconocido**: Se ignora silenciosamente
+- **Categoría sin productos**: Se muestra filterOptions vacío y empty state (caso ya cubierto)
+
+**UX**:
+- Los filtros se aplican al cambiar (no hay botón "Aplicar" separado, excepto para precio que tiene botón "Filtrar" para evitar muchas navegaciones)
+- El sort dropdown cambia inmediatamente al seleccionar
+- Scroll position se mantiene (`scroll: false` en router.replace)
+- Mobile: los filtros van dentro de un `<details>` colapsable (similar al menú de categorías existente)
+
+**Dependencias entre tareas**:
+1. Primero modificar entidad Product (agregar `marca`)
+2. Luego actualizar datos mock con `marca`
+3. Crear tipos compartidos
+4. Crear el use case de filtrado
+5. Crear shared wrapper
+6. Instalar shadcn/ui label + checkbox + separator
+7. Crear FilterSidebar
+8. Crear SortDropdown
+9. Modificar ProductCard para mostrar marca
+10. Modificar página de categoría para integrar todo
+
+#### Orden de implementación
+
+| Paso | Archivo | Depende de |
+|------|---------|------------|
+| 1 | `core/domain/entities/product.ts` (modificar) | — |
+| 2 | `adapters/out/mock/data/products.ts` (modificar) | Paso 1 |
+| 3 | `core/use-cases/catalog/types.ts` (crear) | — |
+| 4 | `core/use-cases/catalog/get-filtered-products.use-case.ts` (crear) | Pasos 1, 3 |
+| 5 | `shared/utils/get-filtered-products.ts` (crear) | Paso 4 |
+| 6 | Instalar shadcn/ui: label, checkbox, separator | — |
+| 7 | `components/ui/*` (label, checkbox, separator) | Paso 6 |
+| 8 | `components/features/sort-dropdown.tsx` (crear) | Paso 3 |
+| 9 | `components/features/filter-sidebar.tsx` (crear) | Pasos 3, 7 |
+| 10 | `components/features/product-card.tsx` (modificar) | Paso 1 |
+| 11 | `app/(catalog)/categorias/[slug]/page.tsx` (modificar) | Pasos 5, 8, 9, 10 |
+
+**Riesgos**:
+- Next.js 16 `searchParams` es asíncrono (`Promise`) — verificar la API exacta
+- Los componentes client (`FilterSidebar`, `SortDropdown`) no pueden importar server-only code
+- Los nombres de specs como keys de URL: "Tipo de RAM" → `tipo-de-ram` (slugify). Necesitamos función helper para convertir spec name → URL-safe key y viceversa

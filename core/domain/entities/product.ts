@@ -17,6 +17,7 @@ export interface ProductProps {
   nombre: string;
   slug: string;
   descripcion: string;
+  marca: string;
   precio: number;
   precioComparativa: number | null;
   stock: number;
@@ -37,6 +38,7 @@ export class Product {
   public readonly nombre: string;
   public readonly slug: string;
   public readonly descripcion: string;
+  public readonly marca: string;
   public readonly precio: number;
   public readonly precioComparativa: number | null;
   public readonly stock: number;
@@ -56,6 +58,7 @@ export class Product {
     this.nombre = props.nombre;
     this.slug = props.slug;
     this.descripcion = props.descripcion;
+    this.marca = props.marca;
     this.precio = props.precio;
     this.precioComparativa = props.precioComparativa;
     this.stock = props.stock;

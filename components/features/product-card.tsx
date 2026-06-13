@@ -35,6 +35,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
         <CardContent className="flex flex-1 flex-col gap-1 pt-4">
+          <p className="text-xs text-muted-foreground">{product.marca}</p>
           <h3 className="line-clamp-2 text-sm font-medium leading-snug">
             {product.nombre}
           </h3>
@@ -46,8 +47,8 @@ export function ProductCard({ product }: ProductCardProps) {
           <p className="text-lg font-semibold tracking-tight">
             {formatPrice(product.precio)}
           </p>
-          {product.descuento && (
-            <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          {product.descuento != null && product.descuento > 0 && (
+            <p className="text-xs font-medium text-primary">
               {product.descuento}% OFF
             </p>
           )}
