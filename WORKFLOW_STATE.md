@@ -86,7 +86,50 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - AC-3: ✅ Nombre, precio, imagen placeholder, badge Disponible/Sin stock
 - AC-4: ✅ Productos inactivos filtrados en repositorios
 
+### US-003 — Página de detalle de producto (IMPLEMENTADO)
+
+**Arquitectura**: Hexagonal completa:
+- `core/ports/in/repositories/i-product-repository.ts` — Nuevos métodos `findBySlug()`, `findByProductoPadreId()`
+- `core/use-cases/catalog/get-product-by-slug.use-case.ts` — Nuevo use case con errores tipados (ProductNotFoundError, CategoryNotFoundError)
+- `adapters/out/mock/data/products.ts` — 6 nuevos productos variantes (2 para teclados, 1 para gabinete)
+- `adapters/out/mock/repositories/mock-product.repository.ts` — Implementación de nuevos métodos
+- `app/(catalog)/productos/[slug]/page.tsx` — Server component con generateMetadata + breadcrumb
+- `components/features/product-detail.tsx` — Client component principal con estado de variante seleccionada
+- `components/features/product-gallery.tsx` — Galería con thumbnails seleccionables
+- `components/features/product-specs-table.tsx` — Tabla de especificaciones con filas alternadas
+- `components/features/product-variant-selector.tsx` — Selector de variantes con soporte color/texto, deshabilitado sin stock
+- `components/features/product-card.tsx` — Envuelto en Link a /productos/[slug]
+
+**Decisiones técnicas**:
+- `ProductDetail` como client component para manejar estado de variante seleccionada
+- `ProductVariantSelector` soporta variantes de tipo color (círculo de color) y texto
+- Variantes sin stock se muestran tachadas y no seleccionables
+- Breadcrumb navegable: Inicio > Catálogo > Categoría > Producto
+- Open Graph metadata sin type "product" (no soportado por Next.js 16)
+- `getPageData()` separa la lógica de fetching del JSX para evitar error de lint (JSX en try/catch)
+- Productos variantes: Redragon K552 (3 switches), Logitech G Pro X TKL (2 switches), NZXT H5 Flow (2 colores)
+
+**AC cubiertos**:
+- AC-1: ✅ Nombre, precio, galería de imágenes, tabla de especificaciones técnicas
+- AC-2: ✅ Selector de variantes (switches/colores) que cambia precio, stock y descripción
+- AC-3: ✅ StockBadge "Disponible"/"Sin stock" + cantidad de unidades
+- AC-4: ✅ Botón "Agregar al carrito" (deshabilitado si sin stock, placeholder para US-013)
+
 ## Review Findings
+
+### US-003 Review (@reviewer)
+✅ **APROBADO** — Sin issues bloqueantes. Código listo para merge.
+
+**Veredicto:** Todos los AC cubiertos, build TypeScript strict pasa, ESLint sin errores, lógica de variantes correcta.
+
+**Recomendaciones (no bloqueantes):**
+- **M-1**: `ProductVariantSelector` no tiene `"use client"` — viola convención del proyecto de Next.js para componentes con interactividad. Aunque técnicamente funciona (su padre es Client Component), es frágil a refactorizaciones.
+- **M-2**: `shared/utils/get-product-by-slug.ts` instancia repositorios mock directamente, acoplando shared a infraestructura. Refactorizar cuando se implemente DI.
+- **M-3**: Falta `loading.tsx` y `not-found.tsx` en `app/(catalog)/productos/[slug]/` — mejora UX.
+- **M-4**: Breadcrumb link a `/categorias` podría ser 404 si no existe página de listado.
+- **M-5**: `generateMetadata` usa catch genérico que trata cualquier error como "Producto no encontrado".
+- **M-6**: Uso de `<img>` en vez de `<Image>` de Next.js (ya advertido por ESLint, aceptable para MVP).
+- **M-7**: Sección "Especificaciones técnicas" se renderiza incluso si está vacía.
 
 ### US-001 Review (@reviewer)
 - **1er review**: ❌ No aprobado — B-1 (Link a ruta inexistente), M-1 (catch silencioso), M-2 (faltan loading/error), M-5 (duplicación de fetch)
@@ -102,6 +145,11 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - ESLint: ✅ Sin errores ni warnings
 - TypeScript: ✅ Strict mode sin errores
 
+### US-003 Lint
+- Build: ✅ Sin errores
+- ESLint: ✅ Solo 1 warning aceptable (`<img>` en product-gallery, placeholder para MVP)
+- TypeScript: ✅ Strict mode sin errores
+
 ## Commit / PR Status
 
 ### US-001 ✅ COMPLETADO
@@ -112,10 +160,49 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - Card Trello: 👀 Review (pendiente mover a Done)
 
 ## Current Phase
-US-001 COMPLETADO ✅ — Listo para US-002
+US-003 EN REVIEW — Code review aprobado ✅
 
 ## Next Steps
-1. Iniciar implementacion US-002: Filtrar y ordenar productos
+1. Mover card US-003 a Review en Trello
+2. Implementar correcciones de M-1 a M-7
+3. Avanzar a US-002 o US-004
+
+---
+
+### US-003: Página de detalle de producto
+
+#### Requisitos (AC)
+- **AC-1**: Muestra nombre, precio, imágenes (galería), especificaciones técnicas en tabla
+- **AC-2**: Si tiene variantes (color, modelo), se muestran selectores y al cambiar varía el precio/stock
+- **AC-3**: Muestra stock disponible
+- **AC-4**: Botón "Agregar al carrito"
+
+#### Arquitectura
+
+**Core/Ports** (extender interfaces):
+- `core/ports/in/repositories/i-product-repository.ts` — Add `findBySlug()`, `findByProductoPadreId()`
+
+**Core/Use Cases** (nuevo):
+- `core/use-cases/catalog/get-product-by-slug.use-case.ts` — Obtiene producto por slug + sus variantes + categoría
+
+**Adapters/Out** (extender):
+- `adapters/out/mock/data/products.ts` — Agregar 2-3 productos variantes (teclado switches, mouse color)
+- `adapters/out/mock/repositories/mock-product.repository.ts` — Implementar findBySlug y findByProductoPadreId
+
+**Adapters/In** (nueva ruta):
+- `app/(catalog)/productos/[slug]/page.tsx` — Server component con metadata dinámica
+
+**UI Components** (nuevos):
+- `components/features/product-detail.tsx` — Client component principal (use client)
+- `components/features/product-gallery.tsx` — Galería de imágenes con thumbnails
+- `components/features/product-variant-selector.tsx` — Selector de variantes
+- `components/features/product-specs-table.tsx` — Tabla de especificaciones técnicas
+
+**Shared** (nuevo):
+- `shared/utils/get-product-by-slug.ts` — cache() wrapper
+
+**Modificar existente**:
+- `components/features/product-card.tsx` — Envolver en Link a /productos/[slug]
 
 ## Definition of Done
 - [x] REQUIREMENTS.md completo con todas las secciones
