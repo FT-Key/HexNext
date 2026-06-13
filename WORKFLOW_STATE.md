@@ -93,7 +93,7 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - **2do review**: ✅ Aprobado — Todos los issues corregidos. Código seguro para merge.
 
 ## Test Results
-<!-- Resultados de tests ejecutados por @tester -->
+<!-- No hay tests configurados aún en el proyecto (MVP Fase 0) -->
 
 ## Lint Results
 
@@ -104,18 +104,18 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 
 ## Commit / PR Status
 
-### US-001
+### US-001 ✅ COMPLETADO
 - Branch: `feat/US-001-catalogo-por-categorias`
-- Commit: Pendiente
-- Push: Pendiente
-- PR: Pendiente
+- Commit: `451f9df` — `feat(US-001): navegar catálogo por categorías`
+- Merge: Squash en dev — `7d98b0c`
+- PR: [#2](https://github.com/FT-Key/HexNext/pull/2)
+- Card Trello: 👀 Review (pendiente mover a Done)
 
 ## Current Phase
-US-001 implementado — Pendiente commit + push + PR
+US-001 COMPLETADO ✅ — Listo para US-002
 
 ## Next Steps
-1. Commit, push y crear PR para US-001 via @git-assistant
-2. Iniciar implementacion US-002: Filtrar y ordenar productos
+1. Iniciar implementacion US-002: Filtrar y ordenar productos
 
 ## Definition of Done
 - [x] REQUIREMENTS.md completo con todas las secciones
@@ -123,4 +123,5 @@ US-001 implementado — Pendiente commit + push + PR
 - [x] Open Questions resueltas con el usuario
 - [x] Cards creadas en Trello (41 cards, 3 listas de backlog + In Progress + Review + Done)
 - [x] Board ID y card IDs registrados en REQUIREMENTS.md para acceso de otros agentes
-- [ ] Iniciar implementacion de primera US (US-001)
+- [x] Iniciar implementacion de primera US (US-001)
+- [ ] Iniciar implementacion de US-002
