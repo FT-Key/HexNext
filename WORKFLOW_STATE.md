@@ -118,8 +118,18 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 ## Review Findings
 
 ### US-003 Review (@reviewer)
-- **Resultado**: ✅ APROBADO — Sin issues bloqueantes
-- **Pendientes (no bloqueantes)**: M-1 (Breadcrumb /categorias no existe) → corregido, M-4 (faltante "use client" en variant-selector) → corregido. M-2 (desacoplar shared de mock), M-3 (loading/not-found), M-5 (diferenciar errores en generateMetadata), M-6 (next/image), M-7 (ocultar specs vacías) → mejoras futuras.
+✅ **APROBADO** — Sin issues bloqueantes. Código listo para merge.
+
+**Veredicto:** Todos los AC cubiertos, build TypeScript strict pasa, ESLint sin errores, lógica de variantes correcta.
+
+**Recomendaciones (no bloqueantes):**
+- **M-1**: `ProductVariantSelector` no tiene `"use client"` — viola convención del proyecto de Next.js para componentes con interactividad. Aunque técnicamente funciona (su padre es Client Component), es frágil a refactorizaciones.
+- **M-2**: `shared/utils/get-product-by-slug.ts` instancia repositorios mock directamente, acoplando shared a infraestructura. Refactorizar cuando se implemente DI.
+- **M-3**: Falta `loading.tsx` y `not-found.tsx` en `app/(catalog)/productos/[slug]/` — mejora UX.
+- **M-4**: Breadcrumb link a `/categorias` podría ser 404 si no existe página de listado.
+- **M-5**: `generateMetadata` usa catch genérico que trata cualquier error como "Producto no encontrado".
+- **M-6**: Uso de `<img>` en vez de `<Image>` de Next.js (ya advertido por ESLint, aceptable para MVP).
+- **M-7**: Sección "Especificaciones técnicas" se renderiza incluso si está vacía.
 
 ### US-001 Review (@reviewer)
 - **1er review**: ❌ No aprobado — B-1 (Link a ruta inexistente), M-1 (catch silencioso), M-2 (faltan loading/error), M-5 (duplicación de fetch)
@@ -135,6 +145,11 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - ESLint: ✅ Sin errores ni warnings
 - TypeScript: ✅ Strict mode sin errores
 
+### US-003 Lint
+- Build: ✅ Sin errores
+- ESLint: ✅ Solo 1 warning aceptable (`<img>` en product-gallery, placeholder para MVP)
+- TypeScript: ✅ Strict mode sin errores
+
 ## Commit / PR Status
 
 ### US-001 ✅ COMPLETADO
@@ -145,10 +160,12 @@ Resueltas durante el analisis. Pendientes menores en REQUIREMENTS.md (multi-idio
 - Card Trello: 👀 Review (pendiente mover a Done)
 
 ## Current Phase
-US-003 EN PROGRESO — Página de detalle de producto
+US-003 EN REVIEW — Code review aprobado ✅
 
 ## Next Steps
-1. Completar implementación US-003: Página de detalle de producto
+1. Mover card US-003 a Review en Trello
+2. Implementar correcciones de M-1 a M-7
+3. Avanzar a US-002 o US-004
 
 ---
 
