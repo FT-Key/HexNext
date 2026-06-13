@@ -18,9 +18,19 @@ export class MockProductRepository implements IProductRepository {
     return this.products.find((p) => p.id === id && p.activo) ?? null;
   }
 
+  async findBySlug(slug: string): Promise<Product | null> {
+    return this.products.find((p) => p.slug === slug && p.activo) ?? null;
+  }
+
   async findByCategoriaIds(categoriaIds: string[]): Promise<Product[]> {
     return this.products.filter(
       (p) => categoriaIds.includes(p.categoriaId) && p.activo
+    );
+  }
+
+  async findByProductoPadreId(padreId: string): Promise<Product[]> {
+    return this.products.filter(
+      (p) => p.productoPadreId === padreId && p.activo
     );
   }
 }
