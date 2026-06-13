@@ -585,6 +585,7 @@ El proyecto est√° construido sobre Next.js con arquitectura hexagonal, y servir√
 | US-039 | `6a2d367bd13cd279ee856e7c` | https://trello.com/c/f0cbfSrH |
 | US-040 | `6a2d367c436fa2fac5fa70c3` | https://trello.com/c/K0sknYdB |
 | US-041 | `6a2d367c280c6087b87c35b5` | https://trello.com/c/Vc7PUh6D |
+| US-042 | `6a2db3148d92f5283331dccf` | https://trello.com/c/QIVFh3DW |
 
 ## Supuestos
 
