@@ -33,4 +33,24 @@ export class MockProductRepository implements IProductRepository {
       (p) => p.productoPadreId === padreId && p.activo
     );
   }
+
+  async findAllAdmin(): Promise<Product[]> {
+    return [...this.products];
+  }
+
+  async findBySlugIncludingInactive(slug: string): Promise<Product | null> {
+    return this.products.find((p) => p.slug === slug) ?? null;
+  }
+
+  async save(product: Product): Promise<Product> {
+    const index = this.products.findIndex((p) => p.id === product.id);
+
+    if (index >= 0) {
+      this.products[index] = product;
+    } else {
+      this.products.push(product);
+    }
+
+    return product;
+  }
 }

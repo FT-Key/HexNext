@@ -1,11 +1,11 @@
 # Workflow State
 
 ## Current US
-- **ID**: —
-- **Card**: —
-- **Status**: —
-- **Phase**: —
-- **Detail**: —
+- **ID**: US-004
+- **Card**: [ABM de productos + variantes](https://trello.com/c/tNmuIl8d)
+- **Status**: ✅ Done
+- **Phase**: P5 - Git + PR
+- **Detail**: Implementado, build OK, preparado para merge
 
 ## History
 | US | Status | Branch | PR | Detail |

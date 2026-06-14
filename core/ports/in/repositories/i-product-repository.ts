@@ -6,4 +6,7 @@ export interface IProductRepository {
   findByCategoriaIds(categoriaIds: string[]): Promise<Product[]>;
   findByProductoPadreId(padreId: string): Promise<Product[]>;
   findAll(): Promise<Product[]>;
+  save(product: Product): Promise<Product>;
+  findAllAdmin(): Promise<Product[]>;
+  findBySlugIncludingInactive(slug: string): Promise<Product | null>;
 }
