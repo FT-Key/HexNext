@@ -1,11 +1,11 @@
 # Workflow State
 
 ## Current US
-- **ID**: US-004
-- **Card**: [ABM de productos + variantes](https://trello.com/c/tNmuIl8d)
-- **Status**: ✅ Done
-- **Phase**: P5 - Git + PR
-- **Detail**: Implementado, build OK, preparado para merge
+- **ID**: US-005
+- **Card**: [US-005: Gestión de categorías (M)](https://trello.com/c/tAEEkOaz)
+- **Status**: In Progress
+- **Phase**: P2 - Implement
+- **Detail**: `workflow-history/US-005.md`
 
 ## History
 | US | Status | Branch | PR | Detail |
@@ -14,6 +14,7 @@
 | US-002 | ✅ Done | feat/US-002-filtrar-ordenar-productos | #1 | workflow-history/US-002.md |
 | US-003 | ✅ Done | feat/US-003-detalle-producto | #3 | workflow-history/US-003.md |
 | US-042 | ✅ Done | feat/US-042-style-audit | #4 | workflow-history/US-042.md |
+| US-004 | ✅ Done | — | — | workflow-history/US-004.md |
 
 ## Project Status
 - MVP en desarrollo activo
@@ -22,5 +23,6 @@
 - Pendiente: continuar con siguientes US del backlog
 
 ## Next Steps
-1. Seleccionar proxima US del backlog para implementar
-2. Seguir el flujo Quality Gate Loop (AGENTS.md)
+1. Completar implementación de US-005 (Gestión de categorías)
+2. Iniciar Quality Gates cuando la implementación esté lista
+3. Seguir el flujo Quality Gate Loop (AGENTS.md)

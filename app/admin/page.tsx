@@ -1,7 +1,12 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { MockCategoryRepository } from "@/adapters/out/mock/repositories/mock-category.repository"
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const categoryRepo = new MockCategoryRepository()
+  const allCategories = await categoryRepo.findAllIncludingInactive()
+  const activeCategories = allCategories.filter((c) => c.activo)
+
   return (
     <div className="space-y-6">
       <div>
@@ -17,6 +22,17 @@ export default function AdminDashboardPage() {
           <p className="mt-2 text-3xl font-bold">—</p>
           <Button variant="outline" size="sm" className="mt-4" asChild>
             <Link href="/admin/productos">Ver productos</Link>
+          </Button>
+        </div>
+
+        <div className="rounded-2xl border bg-card p-6">
+          <h3 className="text-sm font-medium text-muted-foreground">Categorías</h3>
+          <p className="mt-2 text-3xl font-bold">{activeCategories.length}</p>
+          <p className="text-xs text-muted-foreground">
+            {allCategories.length - activeCategories.length} inactivas
+          </p>
+          <Button variant="outline" size="sm" className="mt-4" asChild>
+            <Link href="/admin/categorias">Ver categorías</Link>
           </Button>
         </div>
       </div>
