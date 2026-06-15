@@ -3,10 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import type { Category } from "@/core/domain/entities/category";
+
+interface CategoryNode {
+  id: string;
+  nombre: string;
+  slug: string;
+  descripcion: string | null;
+  categoriaPadreId: string | null;
+  orden: number;
+  activo: boolean;
+  children: CategoryNode[];
+}
 
 interface CategoryNavProps {
-  categories: Category[];
+  categories: CategoryNode[];
 }
 
 export function CategoryNav({ categories }: CategoryNavProps) {
@@ -26,7 +36,7 @@ function CategoryTreeItem({
   category,
   depth,
 }: {
-  category: Category;
+  category: CategoryNode;
   depth: number;
 }) {
   const pathname = usePathname();

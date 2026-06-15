@@ -36,4 +36,17 @@ export class Category {
   addChild(child: Category): void {
     this.children.push(child);
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      nombre: this.nombre,
+      slug: this.slug,
+      descripcion: this.descripcion,
+      categoriaPadreId: this.categoriaPadreId,
+      orden: this.orden,
+      activo: this.activo,
+      children: this.children,
+    };
+  }
 }
