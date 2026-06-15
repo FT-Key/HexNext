@@ -1,11 +1,11 @@
 # Workflow State
 
 ## Current US
-- **ID**: US-005
-- **Card**: [US-005: Gestión de categorías (M)](https://trello.com/c/tAEEkOaz)
+- **ID**: US-006
+- **Card**: [US-006: Configurador "Armá tu PC" (XL)](https://trello.com/c/YQKVGRKd)
 - **Status**: In Progress
 - **Phase**: P2 - Implement
-- **Detail**: `workflow-history/US-005.md`
+- **Detail**: `workflow-history/US-006.md`
 
 ## History
 | US | Status | Branch | PR | Detail |
@@ -15,14 +15,15 @@
 | US-003 | ✅ Done | feat/US-003-detalle-producto | #3 | workflow-history/US-003.md |
 | US-042 | ✅ Done | feat/US-042-style-audit | #4 | workflow-history/US-042.md |
 | US-004 | ✅ Done | — | — | workflow-history/US-004.md |
+| US-005 | ✅ Done | feat/US-005-gestion-categorias | — | workflow-history/US-005.md |
 
 ## Project Status
 - MVP en desarrollo activo
 - Arquitectura hexagonal establecida
 - Design System "Emerald Terminal" implementado
-- Pendiente: continuar con siguientes US del backlog
+- Actualmente implementando: US-006 Configurador "Armá tu PC"
 
 ## Next Steps
-1. Completar implementación de US-005 (Gestión de categorías)
+1. Completar implementación de US-006 (Configurador Armá tu PC)
 2. Iniciar Quality Gates cuando la implementación esté lista
 3. Seguir el flujo Quality Gate Loop (AGENTS.md)
